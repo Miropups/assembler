@@ -1,5 +1,6 @@
 import csv
 import sys
+import os
 
 LOAD_COST = 10
 READ_MEMORY = 0
@@ -60,6 +61,13 @@ def make_bytes(*args):
         bytes_list.append(byte_value)
     bytes_list.reverse()
     return [f"0x{byte:02X}" for byte in bytes_list]
+def write_file(output_name,hex_bytes): #Этап 2 - функция записи в файл получившихся байтов, вывод реального размера
+    bytes_list = [int(h[2:], 16) for h in hex_bytes]
+    with open(output_name,"wb") as output_file:
+        output_file.write(bytes(bytes_list))
+        print("*байты записаны в файл")
+    size = os.path.getsize(output_name)
+    print(f"размер файла:{size} байт")
 
 def load_const():
     print("load_const")
@@ -94,13 +102,18 @@ def main():
         print(f"Тест (A={A}, B={B}, C={C}):")
         print(", ".join(hex_bytes))
     else:
+        hex_bytes =make_bytes(A, B, C)
         if A==10:
             load_const()
+            write_file(output_file,hex_bytes)
         elif A==0:
             read_mem()
+            write_file(output_file,hex_bytes)
         elif A==8:
             write_mem()
+            write_file(output_file,hex_bytes)
         elif A==5:
             unar_operation()
+            write_file(output_file,hex_bytes)
 
 main()
